@@ -1,0 +1,22 @@
+{
+    "manifest_version": 2,
+    "name": "FakeNews",
+    "version": "1.0",
+    "description": "Extension that evaluates the reliability and trustworthiness in Google search",
+    "icons": {
+        "16": "img/focus16.png",
+        "32": "img/focus32.png",
+        "48": "img/focus48.png",
+        "128": "img/focus128.png"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://www.google.com/*"
+            ],
+            "js": [
+                "./main.js"
+            ]
+        }
+    ]
+}
