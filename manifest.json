@@ -4,10 +4,10 @@
     "version": "1.0",
     "description": "Extension that evaluates the reliability and trustworthiness in Google search",
     "icons": {
-        "16": "img/focus16.png",
-        "32": "img/focus32.png",
-        "48": "img/focus48.png",
-        "128": "img/focus128.png"
+        "16": "img/fake16.png",
+        "32": "img/fake32.png",
+        "48": "img/fake48.png",
+        "128": "img/fake128.png"
     },
     "content_scripts": [
         {
