@@ -6,6 +6,8 @@
 //get the search result URLs from the page
 //perform some evaluation on them
 //append a message to the matching search result heading.
+//https://www.allsides.com/media-bias/media-bias-ratings
+//https://mediabiasfactcheck.com/conspiracy/
 let news = {
     'abcnews': { lean: 'Lean Left', trust: 3 },
     'alternet': { lean: 'Left', trust: 1 },
@@ -16,6 +18,7 @@ let news = {
     'cbs': { lean: 'Lean Left', trust: 3 },
     'cnn': { lean: 'Lean Left', trust: 3 },
     'dailymail.co.uk': { lean: 'Right', trust: 3 },
+    'foodbabe': { lean: 'Pseudoscience/Conspiracy', trust: 0 },
     'forbes': { lean: 'Center', trust: 3 },
     'foxnews': { lean: 'Lean Right', trust: 3 },
     'huffpost': { lean: 'Left', trust: 3 },
@@ -62,23 +65,23 @@ const getURLS = () => {
     return arr
 }
 let urls = getURLS();
-console.log(urls)
+//console.log(urls)
 
 //if (((divs[node].innerHTML) != undefined) && !(divs[node].innerText).includes("People also ask")) {
 
 let titles = document.getElementsByClassName('LC20lb DKV0Md'); //'yuRUbf'
-console.log(titles)
+//console.log(titles)
 for (let i in titles) {
     //if ((titles[i].innerText).length > 0) {
     let domain = urls[i].split('/').slice(0, 3).join('/');
     let trustcount = 0;
     let source = 'not known';
     let name = domain.split(".").slice(-2, -1)
-    if (name == "google") {
+    if (name == "google") { //do we still need this?
         i++;
         continue;
     }
-    console.log(domain, trustcount)
+    console.log(domain, trustcount, name)
     //if url contains .org or .edu
     if (urls[i].includes('.org') || urls[i].includes('.edu') || urls[i].includes('.gov') || urls[i].includes('.int')) {
         trustcount += 2;
@@ -90,11 +93,11 @@ for (let i in titles) {
         trustcount += 1;
     }
     if (news[name] != undefined) {
-        console.log(name)
+        //console.log(name)
         source = news[name].lean;
-        console.log(news[name].trust)
+        //console.log(news[name].trust)
         trustcount += news[name].trust;
-        console.log('after adding', trustcount)
+        // console.log('after adding', trustcount)
     }
     // for (let key in news) {
     //     if (domain.includes(key)) {
@@ -108,11 +111,12 @@ for (let i in titles) {
     // }
     // create get request to check links to domain
 
-    // fetch(`${urls[i]}`)
-    //     .then((response) => response.json())
-    //     .then((json) => displayData(json));
+    fetch(`${urls[i]}`)
+        .then((response) => (response.text()))
+        .then(data => console.log(data))
+        .catch(error => { console.log(error) })
     // function displayData(data) {
-    //     console.log(data)
+    //     console.log(data.text())
     // }
     //     let listOfScripts = document.getElementsByTagName('script');
     //     console.log(listOfScripts)
@@ -158,20 +162,18 @@ for (let i in titles) {
     mess.style.border = "1px solid black";
     mess.removeAttribute('href');
     mess.style.textDecoration = "none";
-    console.log('before computing', trustcount)
-    //why is this not computing properly
-
+    //console.log('before computing', trustcount)
     if (trustcount <= 1) {
         mess.style.color = 'red';
-        mess.innerText = `Quality: Uncertain; Source bias: ${source}`;
+        mess.innerText = `Quality: Uncertain; Source bias: ${urls[i], source}`;
     }
     if (trustcount === 2) {
         mess.style.color = 'orange';
-        mess.innerText = `Quality: OK; Source bias: ${source}`;
+        mess.innerText = `Quality: OK; Source bias: ${urls[i], source}`;
     }
     if (trustcount > 2) {
         mess.style.color = 'darkgreen';
-        mess.innerText = `Quality: Good; Source bias: ${source}`;
+        mess.innerText = `Quality: Good; Source bias: ${urls[i], source}`;
     }
     titles[i].appendChild(mess)
     // }
