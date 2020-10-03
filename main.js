@@ -29,7 +29,9 @@ let news = {
     'wsj': { lean: 'Center', trust: 3 },
     'washingtonpost': { lean: 'Lean Left', trust: 3 }
 }
-let divs = document.querySelectorAll('.g');
+let div = document.querySelectorAll('.g');
+let divs = [];
+div.forEach(el => { if (el.className != 'g kno-kp mnr-c g-blk') { divs.push(el) } })
 
 //contains the full html of div // innerHTML contains HTML of element (ie h2) i think
 // for (let node in divs) {
@@ -51,7 +53,7 @@ let divs = document.querySelectorAll('.g');
 const getURLS = () => {
     let arr = [];
     for (let node in divs) {
-        if (((divs[node].innerHTML) != undefined) && !(divs[node].innerText).includes("People also ask")) {
+        if (((divs[node].innerHTML) != undefined)) {
             if ((divs[node].innerHTML).includes('LC20lb DKV0Md')) {
                 arr.push(divs[node].querySelector("a").href)
             }
@@ -62,106 +64,117 @@ const getURLS = () => {
 let urls = getURLS();
 console.log(urls)
 
+//if (((divs[node].innerHTML) != undefined) && !(divs[node].innerText).includes("People also ask")) {
 
-
-let source = 'not known';
-let titles = document.getElementsByClassName('LC20lb DKV0Md');
+let titles = document.getElementsByClassName('LC20lb DKV0Md'); //'yuRUbf'
 console.log(titles)
 for (let i in titles) {
-    if ((titles[i].innerText).length > 0) {
-        let domain = urls[i].split('/').slice(0, 3).join('/');
-        let trustcount = 0;
-
-        console.log(domain, trustcount)
-        //if url contains .org or .edu
-        if (urls[i].includes('.org') || urls[i].includes('.edu') || urls[i].includes('.gov') || urls[i].includes('.int')) {
-            trustcount += 2;
-        }
-        if (urls[i].includes('https')) {
-            trustcount += 1;
-        }
-        if (urls[i].includes('.com')) {
-            trustcount += 1;
-        }
-        for (let key in news) {
-            if (domain.includes(key)) {
-                console.log(domain)
-                source = news[key].lean;
-                console.log(news[key].trust)
-                trustcount += news[key].trust;
-                console.log('after adding', trustcount)
-                break;
-            }
-        }
-        // create get request to check links to domain
-
-        // fetch(`${urls[i]}`)
-        //     .then((response) => response.json())
-        //     .then((json) => displayData(json));
-        // function displayData(data) {
-        //     console.log(data)
-        // }
-        //     let listOfScripts = document.getElementsByTagName('script');
-        //     console.log(listOfScripts)
-        //     console.log(listOfScripts.length)
-        //     console.log(typeof listOfScripts)
-        //     let importantInformation;
-        //     // loop through the script elements to find ones with the type 'application/ld+json' which has the information we need
-        //     for (let i = 0; i < listOfScripts.length; i++) {
-        //         if (listOfScripts[i].type === 'application/ld+json') {
-        //             console.log(listOfScripts[i])
-        //             //         //assign the variable with the content from the script that we want and JSON.parse it to convert it from a string to an object
-        //             //         importantInformation = JSON.parse(listOfScripts[i].innerHTML);
-        //             //     }
-        //             // }
-        //             // for example, we can now pull the author information
-        //             //console.log(importantInformation.creator);
-        //         }
-        //     }
-        // }
-        // .then(function (response) {
-        //     switch (response.status) {
-        //         // status "OK"
-        //         case 200:
-        //             return response.text();
-        //         // status "Not Found"
-        //         case 404:
-        //             throw response;
-        //     }
-        // })
-        // .then(function (data) {
-        //     console.log(data);
-        // })
-        // .catch(function (response) {
-        //     // "Not Found"
-        //     console.log(response.statusText);
-        // });
-
-
-        let mess = document.createElement('span')
-
-        mess.style.fontSize = '1em'
-        mess.id = 'span' + i;
-        mess.style.border = "1px solid black";
-        mess.removeAttribute('href');
-        mess.style.textDecoration = "none";
-        console.log('before computing', trustcount)
-        //why is this not computing properly
-
-        if (trustcount <= 1) {
-            mess.style.color = 'red';
-            mess.innerText = `Quality: Uncertain; Source bias: ${source}`;
-        }
-        if (trustcount === 2) {
-            mess.style.color = 'orange';
-            mess.innerText = `Quality: OK; Source bias: ${source}`;
-        }
-        if (trustcount > 2) {
-            mess.style.color = 'darkgreen';
-            mess.innerText = `Quality: Good; Source bias: ${source}`;
-        }
-        titles[i].appendChild(mess)
+    //if ((titles[i].innerText).length > 0) {
+    let domain = urls[i].split('/').slice(0, 3).join('/');
+    let trustcount = 0;
+    let source = 'not known';
+    let name = domain.split(".").slice(-2, -1)
+    if (name == "google") {
+        i++;
+        continue;
     }
+    console.log(domain, trustcount)
+    //if url contains .org or .edu
+    if (urls[i].includes('.org') || urls[i].includes('.edu') || urls[i].includes('.gov') || urls[i].includes('.int')) {
+        trustcount += 2;
+    }
+    if (urls[i].includes('https')) {
+        trustcount += 1;
+    }
+    if (urls[i].includes('.com')) {
+        trustcount += 1;
+    }
+    if (news[name] != undefined) {
+        console.log(name)
+        source = news[name].lean;
+        console.log(news[name].trust)
+        trustcount += news[name].trust;
+        console.log('after adding', trustcount)
+    }
+    // for (let key in news) {
+    //     if (domain.includes(key)) {
+    //         console.log(domain)
+    //         source = news[key].lean;
+    //         console.log(news[key].trust)
+    //         trustcount += news[key].trust;
+    //         console.log('after adding', trustcount)
+    //         break;
+    //     }
+    // }
+    // create get request to check links to domain
+
+    // fetch(`${urls[i]}`)
+    //     .then((response) => response.json())
+    //     .then((json) => displayData(json));
+    // function displayData(data) {
+    //     console.log(data)
+    // }
+    //     let listOfScripts = document.getElementsByTagName('script');
+    //     console.log(listOfScripts)
+    //     console.log(listOfScripts.length)
+    //     console.log(typeof listOfScripts)
+    //     let importantInformation;
+    //     // loop through the script elements to find ones with the type 'application/ld+json' which has the information we need
+    //     for (let i = 0; i < listOfScripts.length; i++) {
+    //         if (listOfScripts[i].type === 'application/ld+json') {
+    //             console.log(listOfScripts[i])
+    //             //         //assign the variable with the content from the script that we want and JSON.parse it to convert it from a string to an object
+    //             //         importantInformation = JSON.parse(listOfScripts[i].innerHTML);
+    //             //     }
+    //             // }
+    //             // for example, we can now pull the author information
+    //             //console.log(importantInformation.creator);
+    //         }
+    //     }
+    // }
+    // .then(function (response) {
+    //     switch (response.status) {
+    //         // status "OK"
+    //         case 200:
+    //             return response.text();
+    //         // status "Not Found"
+    //         case 404:
+    //             throw response;
+    //     }
+    // })
+    // .then(function (data) {
+    //     console.log(data);
+    // })
+    // .catch(function (response) {
+    //     // "Not Found"
+    //     console.log(response.statusText);
+    // });
+
+
+    let mess = document.createElement('span')
+
+    mess.style.fontSize = '1em'
+    mess.id = 'span' + i;
+    mess.style.border = "1px solid black";
+    mess.removeAttribute('href');
+    mess.style.textDecoration = "none";
+    console.log('before computing', trustcount)
+    //why is this not computing properly
+
+    if (trustcount <= 1) {
+        mess.style.color = 'red';
+        mess.innerText = `Quality: Uncertain; Source bias: ${source}`;
+    }
+    if (trustcount === 2) {
+        mess.style.color = 'orange';
+        mess.innerText = `Quality: OK; Source bias: ${source}`;
+    }
+    if (trustcount > 2) {
+        mess.style.color = 'darkgreen';
+        mess.innerText = `Quality: Good; Source bias: ${source}`;
+    }
+    titles[i].appendChild(mess)
+    // }
 }
 
 
